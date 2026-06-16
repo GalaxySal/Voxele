@@ -1,34 +1,36 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+import { GameEngine } from "./game/GameEngine";
+import { GameHUD } from "./ui/GameHUD";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const engineRef = useRef<GameEngine | null>(null);
 
-  async function greet() {
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const engine = new GameEngine(canvas);
+    engineRef.current = engine;
+    engine.start();
+
+    engine.loadWorld(42, 4);
+
+    return () => {
+      engine.dispose();
+      engineRef.current = null;
+    };
+  }, []);
 
   return (
-    <main className="container">
-      <h1>Welcome to Voxele</h1>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          placeholder="Enter a name..."
-          onChange={(e) => setName(e.currentTarget.value)}
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <div className="relative w-full h-full overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="block w-full h-full"
+        style={{ touchAction: "none" }}
+      />
+      <GameHUD engine={engineRef.current} />
+    </div>
   );
 }
 

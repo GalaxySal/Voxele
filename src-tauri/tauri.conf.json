@@ -13,9 +13,12 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "voxele-app",
-        "width": 800,
-        "height": 600
+        "title": "Voxele",
+        "width": 1280,
+        "height": 720,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true
       }
     ],
     "security": {

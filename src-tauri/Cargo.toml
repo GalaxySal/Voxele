@@ -19,6 +19,8 @@ tauri = { git = "https://github.com/tauri-apps/tauri", branch = "feat/cef", defa
 # tauri-plugin-opener disabled for now - not needed for game MVP
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+noise = "0.9"
+bincode = "1"
 
 [features]
 cef = ["tauri/cef"]

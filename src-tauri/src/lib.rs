@@ -1,7 +1,9 @@
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+mod commands;
+mod generation;
+mod world;
+
+use commands::WorldState;
+use world::World;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -11,7 +13,14 @@ pub fn run() {
     let builder = tauri::Builder::<tauri::Cef>::new();
 
     builder
-        .invoke_handler(tauri::generate_handler![greet])
+        .manage(WorldState(std::sync::Mutex::new(World::new(0))))
+        .invoke_handler(tauri::generate_handler![
+            commands::get_chunk,
+            commands::set_block,
+            commands::get_block,
+            commands::generate_world,
+            commands::get_player_state,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
